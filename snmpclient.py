@@ -31,7 +31,7 @@ V2 = V2C = 1
 __mibBuilder = builder.MibBuilder()
 __mibViewController = view.MibViewController(__mibBuilder)
 
-def add_mib_path(path):
+def add_mib_path(*path):
     """Add a directory to the MIB search path"""
     __mibBuilder.setMibPath(*(__mibBuilder.getMibPath() + path))
 
