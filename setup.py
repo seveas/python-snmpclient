@@ -2,7 +2,7 @@ import os
 from setuptools import setup
  
 setup(name='python-snmpclient',
-    version="0.4",
+    version="0.5",
     description='Wrapper around pysnmp4 for easier snmp querying',
     author='Dennis Kaarsemaker',
     author_email='dennis@kaarsemaker.net',

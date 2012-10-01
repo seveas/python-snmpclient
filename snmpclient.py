@@ -21,7 +21,7 @@ from pysnmp.smi import builder, view
 from pysnmp.smi.error import SmiError
 
 __all__ = ['V1', 'V2', 'V2C', 'add_mib_path', 'load_mibs',
-           'nodeinfo', 'nodename', 'nodeid', 'SnmpClient']
+           'nodeinfo', 'nodename', 'nodeid', 'SnmpClient', 'cmdgen']
 
 # Snmp version constants
 V1 = 0
@@ -76,26 +76,22 @@ def nodeid(oid):
 class SnmpClient(object):
     """Easy access to an snmp deamon on a host"""
 
-    def __init__(self, host, communities):
+    def __init__(self, host, port, authorizations):
         """Set up the client and detect the community to use"""
         self.host = host
+        self.port = port
         self.alive = False
 
         # Which community to use
         noid = nodeid('SNMPv2-MIB::sysName.0')
-        for community in communities:
-            auth = cmdgen.CommunityData(community.get('name','snmpclient'), 
-                                        community.get('community', 'public'), 
-                                        community.get('version', V2C))
-            port = community.get('port', 161)
+        for auth in authorizations:
             (errorIndication, errorStatus, errorIndex, varBinds) = \
-                cmdgen.CommandGenerator().getCmd(auth, cmdgen.UdpTransportTarget((self.host, port)), noid)
+                cmdgen.CommandGenerator().getCmd(auth, cmdgen.UdpTransportTarget((self.host, self.port)), noid)
             if errorIndication == 'requestTimedOut':
                 continue
             else:
                 self.alive = True
                 self.auth = auth
-                self.port = port
                 break
 
     def get(self, oid):

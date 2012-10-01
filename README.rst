@@ -34,26 +34,26 @@ The SnmpClient class
 This class wraps arround pysnmp's cmdgen.CommandGenerator to make it easier to
 address an snmp daemon.
 
-snmpclient.SnmpClient(host, communities)
+snmpclient.SnmpClient(host, port, authorizations)
 ----------------------------------------
-The constructor takes a hostname/ip address and a list of community info dicts.
-These dicts can have the following keys:
+The constructor takes a hostname/ip address, UDP port and a list of
+authorization objects.
 
-name
-  The security name to use. Almost always ignored, defaults to snmpclient
+These objects are created as follows:
 
-community
-  The snmp community to use, defaults to public
+SNMP v1, community public
+  snmpclient.cmdgen.CommunityData('YourApp', 'public', snmpclient.V1)
 
-version
-  The snmp version to use. Should be snmpclient.V1 or snmpclient.V2C (default)
+SNMP v2, custom community
+  snmpclient.cmdgen.CommunityData('YourApp', 'private123', snmpclient.V2C)
 
-port
-  The port the snmpd should listen on, defaults to 161
+SNMP v3, using a USM user
+  cmdgen.UsmUserData('snmpuser', 'Password1', 'Password2',
+            cmdgen.usmHMACSHAAuthProtocol, cmdgen.usmAesCfb128Protocol)
 
-All communities in the list are tried until one succeeds. If none succeed, the
-created instance will have the 'alive' attribute set to False and should not be
-used.
+All authorizations in the list are tried until one succeeds. If none succeed,
+the created instance will have the 'alive' attribute set to False and should
+not be used.
 
 snmpclient.SnmpClient.get(oid)
 ------------------------------
